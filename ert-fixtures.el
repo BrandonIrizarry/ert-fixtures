@@ -68,6 +68,22 @@ example."
   `(ert-deftest ,name ()
      (funcall ,(car fixture) (lambda () ,@body))))
 
+(defmacro efs-merge-fixtures (f1 f2)
+  "Merge two existing fixtures F1 and F2.
+
+That is, return a new fixture whose bindings are the union of F1
+and F2's bindings. For example, we already have simple fixtures
+defined for our initial, more basic tests, but then we'd like to
+be able to reuse these for more complex tests, rather than
+repeat the same bindings across various fixtures.
+
+If F2 overshadows one of F1's bindings, then that binding takes
+precedence, per the behavior of 'let*'."
+  `(eval (let ((bindings1 (efs-fixture--bindings f1))
+               (bindings2 (efs-fixture--bindings f2)))
+           `(efs-define-fixture ,(append bindings1 bindings2)))
+         t))
+
 (provide 'ert-fixtures)
 
 ;; Local Variables:
