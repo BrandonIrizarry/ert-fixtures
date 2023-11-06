@@ -23,10 +23,12 @@ For example, you might be testing something geometry related, and
 would like to write tests for the origin point. So you'd like a
 common fixture for those tests:
 
-(defvar origin-fixture (ert-fixtures-define-fixture ((x 0) (y 0))
+(defvar origin-fixture (ert-fixtures-define-fixture ((x 0) (y 0)))
+  \"A fixture that uses the origin as its main point.\")
 
-You'd then use the macro 'efs-use-fixture' to apply this fixture
-to the test you'd otherwise write with 'ert-deftest':
+You'd then use the macro 'ert-fixtures-use-fixture' to apply this
+fixture to the test code you'd otherwise write with
+'ert-deftest':
 
 (ert-fixtures-use-fixture origin-test-1 (origin-fixture)
   (should (zerop x))
