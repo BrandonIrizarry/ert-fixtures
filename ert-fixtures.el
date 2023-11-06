@@ -52,10 +52,16 @@ See 'elisp#Dynamic Binding'."
   ;; 'elisp#Specification Examples', in particular the
   ;; 'def-edebug-spec' for 'let'.
   (declare (indent 1) (debug ((&rest (gate symbolp def-form)))))
+  ;; Notes:
+  ;;
+  ;; 1. VARS is used for forming the defvar expressions.
+  ;;
+  ;; 2. For OCLOSURE-LAMBDA, SPEC needs to be evaluated, but quoted
+  ;; again so that it isn't confused for a function call.
   (let ((vars (mapcar #'car spec)))
     `(oclosure-lambda (zzz-fixture (bindings (quote ,spec)))
          (body)
-         ,@(mapcar (lambda (var) `(defvar ,var)) vars)
+       ,@(mapcar (lambda (var) `(defvar ,var)) vars)
        (let* ,spec (funcall body)))))
 
 (defmacro efs-use-fixture (name fixture &rest body)
