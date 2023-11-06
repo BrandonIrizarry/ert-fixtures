@@ -53,8 +53,9 @@ See 'elisp#Dynamic Binding'."
   ;; 'def-edebug-spec' for 'let'.
   (declare (indent 1) (debug ((&rest (gate symbolp def-form)))))
   (let ((vars (mapcar #'car spec)))
-    `(lambda (body)
-       ,@(mapcar (lambda (var) `(defvar ,var)) vars)
+    `(oclosure-lambda (zzz-fixture (bindings (quote ,spec)))
+         (body)
+         ,@(mapcar (lambda (var) `(defvar ,var)) vars)
        (let* ,spec (funcall body)))))
 
 (defmacro efs-use-fixture (name fixture &rest body)
