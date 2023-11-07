@@ -67,6 +67,11 @@ merged fixtures."
 (ert-deftest test-merge-fixtures-no-arguments ()
   "Merging no fixtures (nil input) should be legal."
   (efs-merge-fixtures))
+
+(ert-deftest test-use-fixture-no-arguments ()
+  "Using no fixtures should be legal."
+  (efs-use-fixture --test-merge-fixtures-multiple-convenient ()))
+
 ;; Local Variables:
 ;; read-symbol-shorthands: (("efs-" . "ert-fixtures-"))
 ;; End:
