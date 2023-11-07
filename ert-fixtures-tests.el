@@ -13,7 +13,7 @@
                      (should (not (boundp 'label))))))
     (should (funcall fixture test-code))))
 
-(ert-deftest test-use-fixture-basic ()
+(ert-deftest test-use-fixtures-basic ()
   "Do the previous test, but abbreviate it using our convenience
 macro."
   (let ((fixture (efs-define-fixture ((x 1) (y 2)))))
@@ -22,10 +22,10 @@ macro."
       (should (= y 2))
       (should (not (boundp 'label))))))
 
-(ert-deftest test-use-fixture-inline-arg ()
+(ert-deftest test-use-fixtures-inline-arg ()
   "Do the previous test, but evaluate the fixture directly in the
 argument list."
-  (efs-use-fixtures --test-use-fixture-inline-arg ((efs-define-fixture ((x 1) (y 2))))
+  (efs-use-fixtures --test-use-fixtures-inline-arg ((efs-define-fixture ((x 1) (y 2))))
     (should (= x 1))
     (should (= y 2))
     (should (not (boundp 'label)))))
@@ -70,7 +70,7 @@ merged fixtures."
   "Merging no fixtures (nil input) should be legal."
   (efs-merge-fixtures))
 
-(ert-deftest test-use-fixture-no-arguments ()
+(ert-deftest test-use-fixtures-no-arguments ()
   "Using no fixtures should be legal."
   (efs-use-fixtures --test-merge-fixtures-multiple-convenient ()))
 
