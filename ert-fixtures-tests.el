@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
+;; Instructions: run all of the tests at least once, to load any inner
+;; tests. Then afterwards, run tests as normal.
 (require 'ert-fixtures)
 
 (ert-deftest test-define-fixture-basic ()
