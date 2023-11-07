@@ -82,20 +82,24 @@ example."
   `(ert-deftest ,name ()
      (funcall ,(car fixture) (lambda () ,@body))))
 
-(defun efs-merge-fixtures (f1 f2)
-  "Merge two existing fixtures F1 and F2.
+(defun efs-merge-fixtures (&rest fixtures)
+  "Merge the elements of FIXTURES into a single fixture.
 
-That is, return a new fixture whose bindings are the union of F1
-and F2's bindings. For example, we already have simple fixtures
-defined for our initial, more basic tests, but then we'd like to
-be able to reuse these for more complex tests, rather than
-repeat the same bindings across various fixtures.
+That is, return a new fixture whose bindings are the union of the
+individual bindings given by the elements of FIXTURES, which are
+themselves fixtures.
 
-If F2 overshadows one of F1's bindings, then that binding takes
-precedence, per the behavior of 'let*'."
-  (let ((bindings1 (efs-fixture--bindings f1))
-        (bindings2 (efs-fixture--bindings f2)))
-    (cl-symbol-macrolet ((exp `(macroexpand-1 (efs-define-fixture ,(append bindings1 bindings2)))))
+As an example of when we might need this, we may already have
+simple fixtures defined for our initial, more basic
+tests. Eventually, we'd like to be able to reuse these for more
+complex tests, rather than repeat the same bindings across
+various fixtures.
+
+Bindings established by the later elements of FIXTURES can
+overshadow those given by previous ones, per the behavior of
+'let*'."
+  (let ((all-bindings (mapcar #'efs-fixture--bindings fixtures)))
+    (cl-symbol-macrolet ((exp `(macroexpand-1 (efs-define-fixture ,(cl-reduce #'append all-bindings)))))
       (eval (macroexpand-1 exp) t))))
 
 (provide 'ert-fixtures)
