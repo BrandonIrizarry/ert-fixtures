@@ -52,7 +52,7 @@ While this feature is normally only used internally by
 =ert-fixtures-use-fixtures=, users may want to merge fixtures
 manually. /Merging/ fixtures involves creating a new fixture whose
 bindings are the union of the original fixtures. Any repeated bindings
-are overshadowed according to order of the merge arguments:
+are overshadowed according to order of the merge arguments.
 
 #+begin_src emacs-lisp :results verbatim
   (defvar f1 (ert-fixtures-define-fixture ((x 1) (y 2))))
@@ -65,11 +65,15 @@ are overshadowed according to order of the merge arguments:
   (ert-fixtures-fixture--bindings f-all)
 #+end_src
 
-#+RESULTS:
-: ((x 1) (y 2) (y 3) (z 4) (z 0) (w 5))
+Evaluating the previous block, we get
+
+#+begin_example
+((x 1) (y 2) (y 3) (z 4) (z 0) (w 5))
+#+end_example
 
 This set of bindings internally gets passed into a =let*= form as its
-varlist, hence the overshadowing.
+varlist, hence the overshadowing. The following is a test that
+explicitly demonstrates this.
 
 #+begin_src emacs-lisp
   (ert-deftest test-bindings ()
@@ -88,7 +92,8 @@ It's somewhat unwieldy for a test to use bespoke wrapper code simply
 to use a test fixture, as is the case with the =funcall= invocations
 we've been using this whole time. The macro
 =ert-fixtures-use-fixtures= wraps fixture code in the required manner,
-so that users need only include the relevant test code in the body:
+so that users need only include the relevant test code in the
+body. Let's use that macro to rewrite the Pythagorean triplets test.
 
 #+begin_src emacs-lisp
   (ert-fixtures-use-fixtures test-pythagorean-triplets (pythagorean-triplets)

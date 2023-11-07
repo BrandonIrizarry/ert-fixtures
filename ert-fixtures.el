@@ -1,5 +1,9 @@
 ;; -*- lexical-binding: t; -*-
 
+;; Require ERT, so that Emacs recognizes the macroexpanded code.
+;; Otherwise, users would have to do this themselves.
+(require 'ert)
+
 (defun efs--officialize-macro-names ()
   "Give syntax highlighting to the names of macros."
   ;; This code is adapted from the ERT source.
