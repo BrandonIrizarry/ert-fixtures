@@ -40,6 +40,33 @@ merged fixtures."
                       (should (string= label "FUN")))))
     (should (funcall union test-code))))
 
+(ert-deftest test-merge-fixtures-multiple ()
+  "Explicitly test the merging of more than two fixtures at at time."
+  (let* ((f1 (efs-define-fixture ((x 1) (y 2))))
+         (f2 (efs-define-fixture ((label "FUN"))))
+         (f3 (efs-define-fixture ((symbol 'strange))))
+         (union (efs-merge-fixtures f1 f2 f3))
+         (test-code (lambda ()
+                      (should (= x 1))
+                      (should (= y 2))
+                      (should (string= label "FUN"))
+                      (should (eq symbol 'strange)))))
+    (should (funcall union test-code))))
+
+(ert-deftest test-merge-fixtures-multiple-convenient ()
+  "Perform the last test, but using our convenience macro."
+  (let* ((f1 (efs-define-fixture ((x 1) (y 2))))
+         (f2 (efs-define-fixture ((label "FUN"))))
+         (f3 (efs-define-fixture ((symbol 'strange))))
+         (union (efs-merge-fixtures f1 f2 f3))
+         (test-code (lambda ()
+                      (should (= x 1))
+                      (should (= y 2))
+                      (should (string= label "FUN"))
+                      (should (eq symbol 'strange)))))
+    (efs-use-fixture --test-merge-fixtures-multiple-convenient ())
+    (should (funcall union test-code))))
+
 ;; Local Variables:
 ;; read-symbol-shorthands: (("efs-" . "ert-fixtures-"))
 ;; End:
