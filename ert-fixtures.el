@@ -47,11 +47,11 @@ to use these variables. Example use:
               (should (zerop y)))))
 
 Since this still looks a bit artifical, the convenience macro
-'ert-fixtures-use-fixture' is provided to let you apply this
+'ert-fixtures-use-fixtures' is provided to let you apply this
 fixture directly to your test code, setting up the required ERT
 test for you:
 
-(ert-fixtures-use-fixture origin-test-1 (origin-fixture)
+(ert-fixtures-use-fixtures origin-test-1 (origin-fixture)
   (should (zerop x))
   (should (zerop y)))
 
