@@ -74,7 +74,7 @@ example."
   `(ert-deftest ,name ()
      (funcall ,(car fixture) (lambda () ,@body))))
 
-(defmacro efs-merge-fixtures (f1 f2)
+(defun efs-merge-fixtures (f1 f2)
   "Merge two existing fixtures F1 and F2.
 
 That is, return a new fixture whose bindings are the union of F1
@@ -85,10 +85,10 @@ repeat the same bindings across various fixtures.
 
 If F2 overshadows one of F1's bindings, then that binding takes
 precedence, per the behavior of 'let*'."
-  `(eval (let ((bindings1 (efs-fixture--bindings f1))
-               (bindings2 (efs-fixture--bindings f2)))
-           `(efs-define-fixture ,(append bindings1 bindings2)))
-         t))
+  (let ((bindings1 (efs-fixture--bindings f1))
+        (bindings2 (efs-fixture--bindings f2)))
+    (cl-symbol-macrolet ((exp `(macroexpand-1 (efs-define-fixture ,(append bindings1 bindings2)))))
+      (eval (macroexpand-1 exp) t))))
 
 (provide 'ert-fixtures)
 
