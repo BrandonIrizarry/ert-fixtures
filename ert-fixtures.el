@@ -86,10 +86,14 @@ example."
            (doc-string 3)
            (indent defun))
   (let ((documentation (car docstring-keys-and-body)))
-    `(ert-deftest ,name ()
+     `(ert-deftest ,name ()
        ,@(when (stringp documentation) (list (pop docstring-keys-and-body)))
-       ,@(butlast docstring-keys-and-body)
-       (funcall (efs-merge-fixtures ,@fixtures) (lambda () ,@(last docstring-keys-and-body))))))
+       ,@(let (result)
+           (while (keywordp (car docstring-keys-and-body))
+             (push (pop docstring-keys-and-body) result)
+             (push (pop docstring-keys-and-body) result))
+           (reverse result))
+       (funcall (efs-merge-fixtures ,@fixtures) (lambda () ,@docstring-keys-and-body)))))
 
 (defun efs-merge-fixtures (&rest fixtures)
   "Merge the elements of FIXTURES into a single fixture.
