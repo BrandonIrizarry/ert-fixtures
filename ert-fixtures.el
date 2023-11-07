@@ -11,6 +11,14 @@
 
 (add-hook 'emacs-lisp-mode-hook #'efs--officialize-macro-names)
 
+(oclosure-define efs-fixture
+  "A closure representing test code.
+
+The alist consisting of this fixture's dynamically-bound
+variables (called here 'bindings'), is accessible via
+'efs-fixture--bindings'."
+  (bindings :mutable t))
+
 (defmacro efs-define-fixture (spec)
   "Define a test fixture.
 
