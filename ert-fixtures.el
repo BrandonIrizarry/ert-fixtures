@@ -87,13 +87,20 @@ example."
            (indent defun))
   (let ((documentation (car docstring-keys-and-body)))
      `(ert-deftest ,name ()
-       ,@(when (stringp documentation) (list (pop docstring-keys-and-body)))
-       ,@(let (result)
-           (while (keywordp (car docstring-keys-and-body))
-             (push (pop docstring-keys-and-body) result)
-             (push (pop docstring-keys-and-body) result))
-           (reverse result))
-       (funcall (efs-merge-fixtures ,@fixtures) (lambda () ,@docstring-keys-and-body)))))
+
+        ;; Get the documentation, if present.
+        ,@(when (stringp documentation) (list (pop docstring-keys-and-body)))
+
+        ;; Get all our keyword arguments.
+        ,@(let (result)
+            (while (keywordp (car docstring-keys-and-body))
+              (push (pop docstring-keys-and-body) result)
+              (push (pop docstring-keys-and-body) result))
+            (reverse result))
+
+        ;; By now, 'docstring-keys-and-body' should be exhausted to
+        ;; only the body.
+        (funcall (efs-merge-fixtures ,@fixtures) (lambda () ,@docstring-keys-and-body)))))
 
 (defun efs-merge-fixtures (&rest fixtures)
   "Merge the elements of FIXTURES into a single fixture.
