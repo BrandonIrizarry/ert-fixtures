@@ -64,7 +64,7 @@ merged fixtures."
                       (should (= y 2))
                       (should (string= label "FUN"))
                       (should (eq symbol 'strange)))))
-    (efs-use-fixture --test-merge-fixtures-multiple-convenient ())
+    (efs-use-fixture --test-merge-fixtures-multiple-convenient (f1 f2 f3))
     (should (funcall union test-code))))
 
 ;; Local Variables:
