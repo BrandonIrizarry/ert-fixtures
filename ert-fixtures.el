@@ -59,7 +59,7 @@ See 'elisp#Dynamic Binding'."
   ;; 2. For OCLOSURE-LAMBDA, SPEC needs to be evaluated, but quoted
   ;; again so that it isn't confused for a function call.
   (let ((vars (mapcar #'car spec)))
-    `(oclosure-lambda (zzz-fixture (bindings (quote ,spec)))
+    `(oclosure-lambda (efs-fixture (bindings (quote ,spec)))
          (body)
        ,@(mapcar (lambda (var) `(defvar ,var)) vars)
        (let* ,spec (funcall body)))))
