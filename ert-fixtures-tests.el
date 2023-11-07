@@ -15,7 +15,7 @@
   "Do the previous test, but abbreviate it using our convenience
 macro."
   (let ((fixture (efs-define-fixture ((x 1) (y 2)))))
-    (efs-use-fixture --test-use-fixture-basic (fixture)
+    (efs-use-fixtures --test-use-fixture-basic (fixture)
       (should (= x 1))
       (should (= y 2))
       (should (not (boundp 'label))))))
@@ -23,7 +23,7 @@ macro."
 (ert-deftest test-use-fixture-inline-arg ()
   "Do the previous test, but evaluate the fixture directly in the
 argument list."
-  (efs-use-fixture --test-use-fixture-inline-arg ((efs-define-fixture ((x 1) (y 2))))
+  (efs-use-fixtures --test-use-fixture-inline-arg ((efs-define-fixture ((x 1) (y 2))))
     (should (= x 1))
     (should (= y 2))
     (should (not (boundp 'label)))))
@@ -58,7 +58,7 @@ merged fixtures."
   (let* ((f1 (efs-define-fixture ((x 1) (y 2))))
          (f2 (efs-define-fixture ((label "FUN"))))
          (f3 (efs-define-fixture ((symbol 'strange)))))
-    (efs-use-fixture --test-merge-fixtures-multiple-convenient (f1 f2 f3)
+    (efs-use-fixtures --test-merge-fixtures-multiple-convenient (f1 f2 f3)
       (should (= x 1))
       (should (= y 2))
       (should (string= label "FUN"))
@@ -70,7 +70,7 @@ merged fixtures."
 
 (ert-deftest test-use-fixture-no-arguments ()
   "Using no fixtures should be legal."
-  (efs-use-fixture --test-merge-fixtures-multiple-convenient ()))
+  (efs-use-fixtures --test-merge-fixtures-multiple-convenient ()))
 
 ;; Local Variables:
 ;; read-symbol-shorthands: (("efs-" . "ert-fixtures-"))

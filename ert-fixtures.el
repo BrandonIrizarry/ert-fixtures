@@ -5,7 +5,7 @@
   ;; This code is adapted from the ERT source.
   (font-lock-add-keywords
    nil
-   '(("(\\(\\<efs-use-fixture\\)\\>\\s *\\(\\(?:\\sw\\|\\s_\\)+\\)?"
+   '(("(\\(\\<efs-use-fixtures\\)\\>\\s *\\(\\(?:\\sw\\|\\s_\\)+\\)?"
       (1 font-lock-keyword-face nil t)
       (2 font-lock-function-name-face nil t)))))
 
@@ -72,7 +72,7 @@ See 'elisp#Dynamic Binding'."
        ,@(mapcar (lambda (var) `(defvar ,var)) vars)
        (let* ,spec (funcall body)))))
 
-(defmacro efs-use-fixture (name fixtures &rest body)
+(defmacro efs-use-fixtures (name fixtures &rest body)
   "Define the ERT test named NAME, except that the body of the test
 is now run under the given FIXTURES, a list.
 
