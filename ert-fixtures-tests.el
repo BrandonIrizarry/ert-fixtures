@@ -91,6 +91,11 @@ merged fixtures."
     :expected-result :failed
     (time-forward -1)))
 
+(ert-deftest test-define-fixture-evaluate-rhs ()
+  "Make sure the rhs of each binding is evaluated."
+  (let ((fixture (efs-define-fixture ((x (+ 1 1))))))
+    (should (funcall fixture (lambda () (should (= x 2)))))))
+
 ;; Local Variables:
 ;; read-symbol-shorthands: (("efs-" . "ert-fixtures-"))
 ;; End:
