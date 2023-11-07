@@ -1,0 +1,135 @@
+#+title: ERT Fixtures
+#+author: Brandon C. Irizarry
+#+PROPERTY: header-args :lexical t
+
+* Introduction
+This is a collection of macros and functions that could be of use when
+writing text fixtures for =ERT= tests in Emacs.
+
+The idea is to create a set of variable bindings which are then
+dynamically scoped inside the body of any test code.
+
+* Requirements
+Emacs 29 or greater. This is mainly because I've decided to base the
+implementation on Oclosures. Oclosures (/open closures/) let closures
+have accessible fields, and so help with merging test fixtures. This
+in turns aids in implementing =ert-fixtures-use-fixtures=, which
+merges its arguments into a single fixture.
+
+* Defining and Using a Fixture in a Test
+** A Toy Example
+The following is a toy example involving Pythagorean triplets. Here,
+we test whether pairs of numbers form the legs of integer-sided right
+triangles.
+
+We first create a fixture with the required bindings. Note that this
+fixture is of oclosure-type =ert-fixtures-fixture=.
+
+#+begin_src emacs-lisp
+  (require 'ert-fixtures)
+
+  (defvar pythagorean-triplets (ert-fixtures-define-fixture ((t1 '(:x 5 :y 12))
+                                                             (t2 '(:x 3 :y 4)))))
+
+  (defun compute-hypotenuse (x y)
+    "Compute the hypotenuse of the right triangle with the given legs."
+    (sqrt (+ (* x x) (* y y))))
+
+  (ert-deftest test-pythagorean-triplets ()
+    "Check known hypotenuse values for certain sums of squares."
+    :tags '(define-fixture)
+    (funcall pythagorean-triplets
+             (lambda ()
+               ;; Actual test body
+               (cl-destructuring-bind (&key x y) t1
+                 (should (= (compute-hypotenuse x y) 13)))
+               (cl-destructuring-bind (&key x y) t2
+                 (should (= (compute-hypotenuse x y) 5))))))
+#+end_src
+
+** Merging Fixtures
+While this feature is normally only used internally by
+=ert-fixtures-use-fixtures=, users may want to merge fixtures
+manually. /Merging/ fixtures involves creating a new fixture whose
+bindings are the union of the original fixtures. Any repeated bindings
+are overshadowed according to order of the merge arguments:
+
+#+begin_src emacs-lisp :results verbatim
+  (defvar f1 (ert-fixtures-define-fixture ((x 1) (y 2))))
+  (defvar f2 (ert-fixtures-define-fixture ((y 3) (z 4))))
+  (defvar f3 (ert-fixtures-define-fixture ((z 0) (w 5))))
+
+  (defvar f-all (ert-fixtures-merge-fixtures f1 f2 f3))
+
+  ;; Oclosure field access
+  (ert-fixtures-fixture--bindings f-all)
+#+end_src
+
+#+RESULTS:
+: ((x 1) (y 2) (y 3) (z 4) (z 0) (w 5))
+
+This set of bindings internally gets passed into a =let*= form as its
+varlist, hence the overshadowing.
+
+#+begin_src emacs-lisp
+  (ert-deftest test-bindings ()
+    "Make sure later fixtures overshadow earlier ones."
+    (funcall f-all
+             (lambda ()
+               (should (= x 1))
+               (should (= y 3))
+               (should (= z 0))
+               (should (= w 5)))))
+#+end_src
+
+* A Convenience Macro for Shortening Tests: =ert-fixtures-use-fixtures=
+** Eliminating Boilerplate
+It's somewhat unwieldy for a test to use bespoke wrapper code simply
+to use a test fixture, as is the case with the =funcall= invocations
+we've been using this whole time. The macro
+=ert-fixtures-use-fixtures= wraps fixture code in the required manner,
+so that users need only include the relevant test code in the body:
+
+#+begin_src emacs-lisp
+  (ert-fixtures-use-fixtures test-pythagorean-triplets (pythagorean-triplets)
+    "Check known hypotenuse values for certain sums of squares."
+    :tags '(use-fixtures)
+    (cl-destructuring-bind (&key x y) t1
+      (should (= (compute-hypotenuse x y) 13)))
+    (cl-destructuring-bind (&key x y) t2
+      (should (= (compute-hypotenuse x y) 5))))
+#+end_src
+
+** A Drop-In Replacement for =ert-deftest=
+=ert-fixtures-use-fixture= should be able to use any of the additional
+arguments that ERT normally accepts (any keywords, docstring, and
+anything else in current and future versions.) These arguments simply
+get forwarded to =ert-deftest= itself.
+
+** Multiple Fixtures as Arguments
+=ert-fixtures-use-fixture= accepts any number of fixtures as
+arguments. These fixtures are then merged to create a single fixture
+which is then used to harness the test code.
+
+As with fixture merges in general, any repeated bindings introduced by
+fixtures later in the argument list will overshadow earlier ones. This
+is demonstrated in the example below.
+
+#+begin_src emacs-lisp
+  (defvar vegetables (ert-fixtures-define-fixture ((avocado 'vegetable)
+                                                   (carrot 'vegetable)
+                                                   (tomato 'vegetable))))
+
+  (defvar fruits (ert-fixtures-define-fixture ((orange 'fruit)
+                                               (avocado 'fruit)
+                                               (tomato 'fruit))))
+
+  (ert-fixtures-use-fixtures test-food-categories (vegetables fruits)
+      "Correctly categorize certain foods."
+    (should (eq orange 'fruit))
+    (should (eq avocado 'fruit))
+    (should (eq tomato 'fruit)))
+#+end_src
+
+
+
