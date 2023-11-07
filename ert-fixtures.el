@@ -72,15 +72,24 @@ See 'elisp#Dynamic Binding'."
        ,@(mapcar (lambda (var) `(defvar ,var)) vars)
        (let* ,spec (funcall body)))))
 
-(defmacro efs-use-fixtures (name fixtures &rest body)
+(defmacro efs-use-fixtures (name fixtures &rest docstring-keys-and-body)
   "Define the ERT test named NAME, except that the body of the test
 is now run under the given FIXTURES, a list.
 
 See documentation for 'ert-fixtures-define-fixture' for an
 example."
-  (declare (indent defun) (debug ((name listp) def-body)))
-  `(ert-deftest ,name ()
-     (funcall (efs-merge-fixtures ,@fixtures) (lambda () ,@body))))
+  (declare (debug (&define name
+                           listp ; fixtures
+                           [&optional stringp] ; docstring
+                           [&rest keywordp sexp] ; keys
+                           def-body)) ; body
+           (doc-string 3)
+           (indent defun))
+  (let ((documentation (car docstring-keys-and-body)))
+    `(ert-deftest ,name ()
+       ,@(when (stringp documentation) (list (pop docstring-keys-and-body)))
+       ,@(butlast docstring-keys-and-body)
+       (funcall (efs-merge-fixtures ,@fixtures) (lambda () ,@(last docstring-keys-and-body))))))
 
 (defun efs-merge-fixtures (&rest fixtures)
   "Merge the elements of FIXTURES into a single fixture.
