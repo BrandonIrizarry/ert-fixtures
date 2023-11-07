@@ -64,6 +64,9 @@ merged fixtures."
       (should (string= label "FUN"))
       (should (eq symbol 'strange)))))
 
+(ert-deftest test-merge-fixtures-nil-input ()
+  "Merging no fixtures (nil input) should be legal."
+  (efs-merge-fixtures))
 ;; Local Variables:
 ;; read-symbol-shorthands: (("efs-" . "ert-fixtures-"))
 ;; End:
