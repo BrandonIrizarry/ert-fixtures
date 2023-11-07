@@ -72,7 +72,24 @@ merged fixtures."
 
 (ert-deftest test-use-fixtures-no-arguments ()
   "Using no fixtures should be legal."
-  (efs-use-fixtures --test-merge-fixtures-multiple-convenient ()))
+  :tags '(no-args)
+  (efs-use-fixtures --test-merge-fixtures-multiple-convenient ())
+  (message "I'm a normal test, and I ran."))
+
+;; This is more of a demo than a test, since this has to be run twice:
+;; once to load the inner test, and again to see the inner test
+;; execute. (That is, using the '(tag no-args)' selector).
+(ert-deftest test-use-fixtures-ert-goodies ()
+  "Pass in ERT's auxiliary arguments to our macro."
+  :tags '(no-args)
+  (message "I'm the parent of a special test, and I ran.")
+  (efs-use-fixtures --some-test ()
+    "This is an enhanced test unit."
+    :tags '(no-args)
+    (message "I'm a special test, and I ran."))
+  (efs-use-fixtures --another-test ()
+    :expected-result :failed
+    (time-forward -1)))
 
 ;; Local Variables:
 ;; read-symbol-shorthands: (("efs-" . "ert-fixtures-"))
