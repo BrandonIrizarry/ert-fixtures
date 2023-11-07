@@ -64,7 +64,7 @@ See 'elisp#Dynamic Binding'."
   ;;
   ;; 1. VARS is used for forming the defvar expressions.
   ;;
-  ;; 2. For OCLOSURE-LAMBDA, SPEC needs to be evaluated, but quoted
+  ;; 2. For OCLOSURE-LAMBDA, SPEC needs to be expanded, but quoted
   ;; again so that it isn't confused for a function call.
   (let ((vars (mapcar #'car spec)))
     `(oclosure-lambda (efs-fixture (bindings (quote ,spec)))
