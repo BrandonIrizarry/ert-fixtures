@@ -15,7 +15,7 @@
   "Do the previous test, but abbreviate it using our convenience
 macro."
   (let ((fixture (efs-define-fixture ((x 1) (y 2)))))
-    (efs-use-fixture --test-use-fixture-basic (foo)
+    (efs-use-fixture --test-use-fixture-basic (fixture)
       (should (= x 1))
       (should (= y 2))
       (should (not (boundp 'label))))))
